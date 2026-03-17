@@ -44,6 +44,7 @@
     "fastify": "^5.0.0",
     "graphql": "^16.11.0",
     "graphql-type-json": "^0.3.2",
+    "ioredis": "^5.4.1",
     "mongoose": "^8.16.3",
     "mongoose-paginate-v2": "^1.9.1",
     "mongoose-unique-validator": "^4.0.1",

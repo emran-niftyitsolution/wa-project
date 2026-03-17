@@ -1,12 +1,12 @@
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Logger, Module } from '@nestjs/common';
-import GraphQLJSON from 'graphql-type-json';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ThrottlerModule } from '@nestjs/throttler';
+import GraphQLJSON from 'graphql-type-json';
+// import { ThrottlerModule } from '@nestjs/throttler';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { GraphQLError } from 'graphql';
 import { Connection } from 'mongoose';
@@ -18,8 +18,9 @@ import { ActivityLogService } from './activity-logs/activity-logs.service';
 import { AppResolver } from './app.resolver';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { CacheModule } from './cache/cache.module';
+import { CategoryModule } from './category/category.module';
 import { GqlAuthGuard } from './common/guards/gql-auth.guard';
-import { GqlThrottlerGuard } from './common/guards/graphq-throttler.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { TrimPipe } from './common/pipes/trim.pipe';
 import { UserModule } from './user/user.module';
@@ -55,6 +56,7 @@ import { UserModule } from './user/user.module';
           );
 
           connection.plugin(mongoosePaginateV2);
+          /* eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- Mongoose connection.plugin() accepts schema plugins at runtime */
           connection.plugin(mongooseUniqueValidator, {
             message: 'Error, expected {PATH} to be unique.',
           });
@@ -101,15 +103,17 @@ import { UserModule } from './user/user.module';
         return formattedError;
       },
     }),
-    ThrottlerModule.forRoot({
-      throttlers: [
-        {
-          ttl: 60000,
-          limit: 30,
-        },
-      ],
-    }),
+    // ThrottlerModule.forRoot({
+    //   throttlers: [
+    //     {
+    //       ttl: 60000,
+    //       limit: 30,
+    //     },
+    //   ],
+    // }),
+    CacheModule,
     ActivityLogModule,
+    CategoryModule,
     UserModule,
     AuthModule,
   ],
@@ -120,10 +124,10 @@ import { UserModule } from './user/user.module';
       provide: APP_PIPE,
       useClass: TrimPipe,
     },
-    {
-      provide: APP_GUARD,
-      useClass: GqlThrottlerGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: GqlThrottlerGuard,
+    // },
     {
       provide: APP_GUARD,
       useClass: GqlAuthGuard,

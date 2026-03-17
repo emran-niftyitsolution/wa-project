@@ -25,6 +25,8 @@
 
 NestJS + **Fastify** + MongoDB + GraphQL API (TypeScript). Uses **Bun** as the runtime and package manager.
 
+**Categories**: Hierarchical categories (unlimited nesting) with GraphQL CRUD, search (with parent in response), and recursive deactivation. Optional **Redis** (`REDIS_URL`) caches category data; cache is cleared when categories are created, updated, deleted, or deactivated.
+
 ## Project setup
 
 ```bash
